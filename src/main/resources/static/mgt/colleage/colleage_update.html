@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>修改学员</title>
+    <link rel="stylesheet" type="text/css" href="/extend/easyui-1.10.8/themes/gray/easyui.css">
+	<link rel="stylesheet" type="text/css" href="/extend/easyui-1.10.8/themes/icon.css">
+	<script type="text/javascript" src="/extend/easyui-1.10.8/jquery.min.js"></script>
+	<script type="text/javascript" src="/extend/easyui-1.10.8/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="/extend/easyui-1.10.8/locale/easyui-lang-zh_CN.js"></script>
+  </head>
+  <body>
+     <form style="margin-left:30px;margin-top:30px;" id="colleageFormUpdate" class="easyui-form"  method="POST" data-options="novalidate:true">
+         <input type="hidden" name="id" id="colleageId">
+         <div style="margin-bottom:12px">
+            <input class="easyui-textbox" id="codeID" name="code" style="width:400px" data-options="label:'学院编号:',required:true">
+         </div>
+         <div style="margin-bottom:12px">
+           <input class="easyui-textbox" id="nameId" name="name" style="width:400px" data-options="label:'学院名称:',required:true">
+         </div>
+     </form>
+     
+     <script>
+         $(document).ready(function (){
+             let href = $('#colleageDialog').dialog('options')['href'];
+             let id = href.substring(href.indexOf('=')+1);
+             $('#colleageId').val(id);
+             // window.alert(id);
+             let url = '/mgt/colleage/queryPrimaryKey/'+id;
+             // window.alert(url);
+             $.post(url,function (data){
+                 if (typeof(data)==='string'){
+                     data=JSON.parse(data);
+                 }
+                 if (data.resultCode==200){
+                     $('#colleageFormUpdate').form('load',data.datas);
+                 }else {
+                     $.messager.alert('info',data.message);
+                 }
+             });
+         });
+         function submitForm(){
+             if (!$('#colleageDialog').form('enableValidation').form('validate')){
+                 // window.alert("退出");
+                 return;
+
+             }
+             //serialize方法:将表单中的数据自动拼接成字符串类型的参数。
+             let data = $('#colleageFormUpdate').serialize();
+             // window.alert(data);
+             $.ajax({
+                 url:'/mgt/colleage/updateColleage',
+                 type:'put',
+                 data:data,
+                 success:function(result){
+                     // window.alert(result);
+                     if (typeof(result)==='string'){
+                         result=JSON.parse(result);
+                         // window.alert(result);
+                     }
+                     if (result.resultCode == 200){
+                         $.messager.alert('info',result.message);
+                         $('#colleageDialog').dialog('close');
+                         queryColleage();
+                     }else {
+                         $.messager.alert('warning',result.message);
+                     }
+                 }
+             });
+         }
+
+     </script>
+  
+  </body>
+  
+</html>

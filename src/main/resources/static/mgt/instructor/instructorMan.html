@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>辅导员管理</title>
+    <link rel="stylesheet" type="text/css" href="/extend/jquery-easyui-1.10.8/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/extend/jquery-easyui-1.10.8/themes/icon.css">
+    <script type="text/javascript" src="/extend/jquery-easyui-1.10.8/jquery.min.js"></script>
+    <script type="text/javascript" src="/extend/jquery-easyui-1.10.8/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/extend/jquery-easyui-1.10.8/locale/easyui-lang-zh_CN.js"></script>
+</head>
+
+<body class="easyui-layout">
+    <!--学院扩展栏-->
+    <div data-options="region:'west',split:true,border:false,toolbar:'#ttb'" title="学院" style="width:180px;" >
+        <ul class="easyui-tree" id="colleageTreeId" data-options="
+					url:'/mgt/colleage/vcolleage',
+					method:'post',
+					animate:true,
+					onContextMenu:function(e,node){
+					    e.preventDefault();
+						$(this).tree('select',node.target);
+					},
+					onClick:function(node){
+					    queryInstructor();
+					}
+				">
+        </ul>
+    </div>
+    <div id="ttb">
+        <a href="javascript:void(0)" class="icon-add" onclick="javascript:alert('add')"></a>
+        <a href="javascript:void(0)" class="icon-edit" onclick="javascript:alert('edit')"></a>
+        <a href="javascript:void(0)" class="icon-cut" onclick="javascript:alert('cut')"></a>
+        <a href="javascript:void(0)" class="icon-reload" onclick="reloadColleage()"></a>
+    </div>
+
+    <div data-options="region:'center',iconCls:'icon-ok'" style="padding:0px">
+        <div class="easyui-layout" data-options="fit:true">
+            <!--辅导员管理栏-->
+            <div data-options="region:'north',split:true,border:false" style="height:60%" title="辅导员" >
+                <div id="tbb">
+                    <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'" onclick="instructorAdd('/mgt/instructor/instruct_add.html','新增辅导员')">新增</a>
+                    <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-edit'" onclick="updateData('/mgt/instructor/instructor_update.html','修改辅导员属性')">修改</a>
+                    <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'" onclick="deleteInstructor()">删除</a>
+                    <div id="queryInstructor">
+                        <form id="instructorQueryForm" class="easyui-form">
+                            <input class="easyui-textbox" name="num" id="numID" style="width:180px"  data-options="label:'工号:'">
+                            <input class="easyui-textbox" name="name" id="nameID" style="width:180px" data-options="label:'姓名:'">
+                            <input id="enteryearId" class="easyui-combobox" name="enteryear" style="width:180px" data-options="multiple:true, label:'学生年级:',valueField:'id',textField:'text',url:'/mgt/common/grade'">
+                            <input id="majorId" class="easyui-combobox" name="name" style="width:200px" data-options="multiple:true,label:'专业:', valueField:'id',textField:'text',url:'/mgt/major/queryMajor'">
+                            <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-search'" onclick="queryInstructor()">查询</a>
+                        </form>
+                    </div>
+                </div>
+                <table class="easyui-datagrid" id="instructorTable" style="width:100%"
+                       data-options="rownumbers:true,
+                        url:'/mgt/instructor/queryVinstructor',
+                        loadMsg:'正在加载数据...',
+                        emptyMsg:'没有满足条件的数据',
+                        singleSelect:true,method:'post',
+                        toolbar:'#tbb',fit:true,
+                        pagination:true,
+                        pageSize:10"
+                            >
+                    <thead>
+                    <tr>
+                        <th data-options="field:'id',hidden:true"></th>
+                        <th data-options="field:'num',width:120,align:'center'">工号</th>
+                        <th data-options="field:'name',width:150,align:'center'">姓名</th>
+                        <th data-options="field:'colleageName',width:160,align:'center'">所属学院</th>
+                        <th data-options="field:'enterdate',width:160,align:'center'">入职日期</th>
+                        <th data-options="field:'leavedate',width:160,align:'center'">离职日期</th>
+                    </tr>
+                    </thead>
+                </table>
+
+            </div>
+            <div id="instructorDialog"></div>
+
+            <!--班级管理栏-->
+            <div data-options="region:'center',split:true" style="height:50%" title="班级"></div>
+        </div>
+    </div>
+    <script>
+        function instructorAdd(page,title){
+            $('#instructorDialog').dialog({
+                title: title,
+                width: 500,
+                height: 320,
+                closed: false,
+                cache: false,
+                href: page,
+                modal: true,
+                buttons:[{
+                    text:'提交',
+                    handler:function(){
+                        submitForm();
+                    }
+                },{
+                    text:'关闭',
+                    handler:function(){
+                        $('#instructorDialog').dialog('close');
+                    }
+                }]
+            });
+
+        }
+        function queryInstructor(){
+            let param= {};
+            param.num=$('#numID').textbox('getValue');
+            param.name =$('#nameID').textbox('getValue');
+            let _enteryears=$('#enteryearId').combo('getValues');
+            if (_enteryears.length>0){
+                param.enteryears=_enteryears.join(',');
+            }
+            let _majors=$('#majorId').combo('getValues');
+            if (_majors.length>0){
+                param.majorIds=_majors.join(',');
+            }
+            let colleage=$('#colleageTreeId').tree('getSelected');
+
+            if (colleage!=null){
+                param.colleageId =colleage.id;
+            }
+            console.log(param);
+            $('#instructorTable').datagrid('reload',param);
+        }
+
+        function updateData(page,title){
+            let selectedDate = $('#instructorTable').datagrid('getSelected');
+            if (selectedDate==null){
+                $.messager.alert('info','请选择修改的数据！');
+                return;
+            }
+            page = page+'?id='+selectedDate.id;
+            instructorAdd(page,title);
+        }
+
+        function deleteInstructor(){
+            let selectedData = $('#instructorTable').datagrid('getSelected');
+            if (selectedData==null){
+                $.messager.alert('info','请选择删除的数据！');
+                return;
+            }
+            $.messager.confirm('提示','是否确定删除此数据？',function (r){
+                if (r){
+                    $.ajax({
+                        url:"/mgt/instructor/delete/"+selectedData.id,
+                        type:"delete",
+                        success:function (result){
+                            // window.alert(result.resultCode);
+                            // result=JSON.parse(result);
+                            if(result.resultCode == 200){
+                                $.messager.alert('info',result.message);
+                                queryInstructor();
+                                let index = $('#instructorTable').datagrid('getRowIndex',selectedData);
+                                $('#instructorTable').datagrid('deleteRow',index);
+                            }else {
+                                $.messager.alert('warning',result.message);
+                            }
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>

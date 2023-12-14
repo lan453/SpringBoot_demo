@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>修改班级属性</title>
+  <link rel="stylesheet" type="text/css" href="/extend/easyui-1.10.8/themes/gray/easyui.css">
+  <link rel="stylesheet" type="text/css" href="/extend/easyui-1.10.8/themes/icon.css">
+  <script type="text/javascript" src="/extend/easyui-1.10.8/jquery.min.js"></script>
+  <script type="text/javascript" src="/extend/easyui-1.10.8/jquery.easyui.min.js"></script>
+  <script type="text/javascript" src="/extend/easyui-1.10.8/locale/easyui-lang-zh_CN.js"></script>
+</head>
+<body>
+  <div title="代理班级" style="padding:0px" data-options="border:0">
+    <form style="margin-left:30px;margin-top:30px;" id="agentClassFormAdd" class="easyui-form"  method="POST" data-options="novalidate:true">
+      <div style="margin-bottom:12px">
+        <input id="academicYearUpdateId" class="easyui-combobox" name="academicyearid" style="width:300px" data-options="label:'学年:',valueField:'id',textField:'text',url:'/mgt/common/diclist?tableName=COMON&fieldName=ACADEMIC'">
+      </div>
+      <div style="margin-bottom:12px">
+        <input id="termUpdateId" class="easyui-combobox" name="term" style="width:300px" data-options="label:'学期:', valueField:'id',textField:'text',url:'/mgt/common/diclist?tableName=COMON&fieldName=TERM'">
+      </div>
+      <div style="margin-bottom:12px">
+        <input id="academicClassId" name="classid" style="width:300px" >
+      </div>
+    </form>
+
+    <script>
+      $(document).ready(function (){
+        let href = $('#instructorDialog').dialog('options')['href'];
+        let id = href.substring(href.indexOf('=')+1);
+        $('#classId').val(id);
+        // window.alert(id);
+        let url = '/mgt/instructor/queryIcPrimaryKey/'+id;
+        // window.alert(url);
+        $.post(url,function (data){
+          if (typeof(data)==='string'){
+            data=JSON.parse(data);
+          }
+          if (data.resultCode==200){
+            $('#classFormUpdate').form('load',data.datas);
+          }else {
+            $.messager.alert('info',data.message);
+          }
+        });
+      });
+      function submitForm(){
+        if (!$('#classDialog').form('enableValidation').form('validate')){
+          // window.alert("退出");
+          return;
+
+        }
+        //serialize方法:将表单中的数据自动拼接成字符串类型的参数。
+        let data = $('#classFormUpdate').serialize();
+        // window.alert(data);
+        $.ajax({
+          url:'/mgt/instructor/updateInstructorClass',
+          type:'put',
+          data:data,
+          success:function(result){
+            // window.alert(result);
+            if (typeof(result)==='string'){
+              result=JSON.parse(result);
+              // window.alert(result);
+            }
+            if (result.resultCode == 200){
+              $.messager.alert('info',result.message);
+              $('#classDialog').dialog('close');
+              queryClass();
+            }else {
+              $.messager.alert('warning',result.message);
+            }
+          }
+        });
+      }
+
+
+    </script>
+
+</div>
+</body>
+</html>

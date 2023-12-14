@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.springboot_demo.dao.mapper.TclassMapper">
+  <resultMap id="BaseResultMap" type="com.example.springboot_demo.entity.Tclass">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="enteryear" jdbcType="INTEGER" property="enteryear" />
+    <result column="majorID" jdbcType="SMALLINT" property="majorid" />
+    <result column="colleageID" jdbcType="TINYINT" property="colleageid" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, name, enteryear, majorID, colleageID
+  </sql>
+  <select id="selectByExample" parameterType="com.example.springboot_demo.entity.TclassExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from tclass
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tclass
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from tclass
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.example.springboot_demo.entity.TclassExample">
+    delete from tclass
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+
+  <insert id="insert" parameterType="com.example.springboot_demo.entity.Tclass">
+    insert into tclass (id, name, enteryear, 
+      majorID, colleageID)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{enteryear,jdbcType=INTEGER}, 
+      #{majorid,jdbcType=SMALLINT}, #{colleageid,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.springboot_demo.entity.Tclass">
+    insert into tclass
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="enteryear != null">
+        enteryear,
+      </if>
+      <if test="majorid != null">
+        majorID,
+      </if>
+      <if test="colleageid != null">
+        colleageID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="enteryear != null">
+        #{enteryear,jdbcType=INTEGER},
+      </if>
+      <if test="majorid != null">
+        #{majorid,jdbcType=SMALLINT},
+      </if>
+      <if test="colleageid != null">
+        #{colleageid,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.example.springboot_demo.entity.TclassExample" resultType="java.lang.Long">
+    select count(*) from tclass
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update tclass
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.name != null">
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.enteryear != null">
+        enteryear = #{record.enteryear,jdbcType=INTEGER},
+      </if>
+      <if test="record.majorid != null">
+        majorID = #{record.majorid,jdbcType=SMALLINT},
+      </if>
+      <if test="record.colleageid != null">
+        colleageID = #{record.colleageid,jdbcType=TINYINT},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update tclass
+    set id = #{record.id,jdbcType=INTEGER},
+      name = #{record.name,jdbcType=VARCHAR},
+      enteryear = #{record.enteryear,jdbcType=INTEGER},
+      majorID = #{record.majorid,jdbcType=SMALLINT},
+      colleageID = #{record.colleageid,jdbcType=TINYINT}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.springboot_demo.entity.Tclass">
+    update tclass
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="enteryear != null">
+        enteryear = #{enteryear,jdbcType=INTEGER},
+      </if>
+      <if test="majorid != null">
+        majorID = #{majorid,jdbcType=SMALLINT},
+      </if>
+      <if test="colleageid != null">
+        colleageID = #{colleageid,jdbcType=TINYINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.springboot_demo.entity.Tclass">
+    update tclass
+    set name = #{name,jdbcType=VARCHAR},
+      enteryear = #{enteryear,jdbcType=INTEGER},
+      majorID = #{majorid,jdbcType=SMALLINT},
+      colleageID = #{colleageid,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <resultMap id="queryClassMap" type="com.example.springboot_demo.ventity.CommonClass">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="className" jdbcType="VARCHAR" property="className" />
+    <result column="enteryear" jdbcType="INTEGER" property="enteryear" />
+    <result column="colleageName" jdbcType="VARCHAR" property="colleageName" />
+    <result column="majorName" jdbcType="TINYINT" property="majorName" />
+  </resultMap>
+  <sql id="cascade_where_Clause">
+    <foreach collection="oredCriteria" item="criteria" separator="or">
+      <if test="criteria.valid">
+        and
+        <trim prefix="(" prefixOverrides="and" suffix=")">
+          <foreach collection="criteria.criteria" item="criterion">
+            <choose>
+              <when test="criterion.noValue">
+                and ${criterion.condition}
+              </when>
+              <when test="criterion.singleValue">
+                and ${criterion.condition} #{criterion.value}
+              </when>
+              <when test="criterion.betweenValue">
+                and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+              </when>
+              <when test="criterion.listValue">
+                and ${criterion.condition}
+                <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                  #{listItem}
+                </foreach>
+              </when>
+            </choose>
+          </foreach>
+        </trim>
+      </if>
+    </foreach>
+  </sql>
+  <select id="selectByExampleAndCascade" parameterType="com.example.springboot_demo.entity.TclassExample" resultMap="queryClassMap">
+    select cl.id,cl.name as className,cl.enteryear,co.name as colleageName,ma.name as majorName
+    from tclass cl,tcolleage co,tmajor ma
+    where cl.colleageID=co.id and cl.majorID=ma.id
+    <if test="_parameter != null">
+      <include refid="cascade_where_Clause"/>
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <resultMap id="queryClassResultMap" type="com.example.springboot_demo.ventity.ComBoxEntity">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="text" />
+  </resultMap>
+  <select id="selectClassTree" resultMap="queryClassResultMap" resultType="com.example.springboot_demo.ventity.CommonClass">
+    select id,name from Tclass
+    where colleageID = #{colleageid,jdbcType=TINYINT}
+  </select>
+  <resultMap id="queryUnionClassMap" type="com.example.springboot_demo.ventity.VUnionSelectClass">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="className" jdbcType="VARCHAR" property="className" />
+    <result column="enteryear" jdbcType="INTEGER" property="enteryear" />
+    <result column="colleageName" jdbcType="VARCHAR" property="colleageName" />
+    <result column="majorName" jdbcType="TINYINT" property="majorName" />
+    <result column="instructorId" jdbcType="SMALLINT" property="instructorId" />
+    <result column="instructorName" jdbcType="VARCHAR" property="instructorName" />
+  </resultMap>
+
+  <select id="listClassByEnterYearAndColleage"  resultMap="queryUnionClassMap">
+    select tc.id,tc.name as className,tc.enteryear,m.name as majorName,
+    coll.name colleageName,t1.instructorId,t2.name as instructorName
+    from TClass tc left outer join
+    (
+    select
+    a.instructorId,a.classId
+    from TInstructorClass a ,
+    (
+    select max(academicYearId) as aca,max(term) as ter,classId from TInstructorClass group by classId) as b
+    where a.academicYearId = b.aca
+    and a.term = b.ter
+    and a.classId = b.classId
+    ) as t1
+    on tc.id = t1.classId
+    left outer join
+    TInstructor t2
+    on t1.instructorId = t2.id
+
+    left outer join
+    TColleage coll
+    on tc.colleageId = coll.id
+    left outer join
+    TMajor m
+    on m.id = tc.majorId
+
+    where 
+    coll.name=#{arg0}
+    and
+    <foreach item="item" index="index" collection="arg1" open="tc.enteryear in (" separator="," close=")">
+      #{item}
+    </foreach>
+    order by enteryear asc
+  </select>
+
+  <resultMap id="queryInClassMap" type="com.example.springboot_demo.ventity.CommonInCla">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="className" jdbcType="VARCHAR" property="className" />
+    <result column="enteryear" jdbcType="INTEGER" property="enteryear" />
+    <result column="majorName" jdbcType="TINYINT" property="majorName" />
+    <result column="des" jdbcType="VARCHAR" property="des" />
+    <result column="term" jdbcType="CHAR" property="term" />
+  </resultMap>
+  <select id="listClassByInstructorId"  resultMap="queryInClassMap">
+    select ic.id, cl.name as className,cl.enteryear,ma.name as majorName,
+    (select des from TSysdic where tablename='COMON' and filedname='ACADEMIC' and value=ic.academicYearId) as des,
+    (select des from TSysdic where tablename='COMON' and filedname='TERM' and value=ic.term) as term
+    from tclass cl,tcolleage co,tmajor ma,TinstructorClass ic,Tsysdic sy
+    where cl.colleageID=co.id and cl.majorID=ma.id and ic.classId=cl.id and ic.classId=cl.id and ic.academicYearId=sy.id
+    and (year(now())-cl.enteryear) &lt;= 4
+    and
+    ic.instructorID= #{instructorID,jdbcType=TINYINT}
+    order by enteryear,className asc
+  </select>
+
+
+<!--  <select id="queryByInstructor" parameterType="com.example.springboot_demo.ventity.QueryClassParam" resultMap="">-->
+<!--    select cl.name,cl.enteryear,m.name as majorName,cg.name as colleageName,-->
+<!--    (select des from TSysdic where tablename='COMMON' and filedname='ACADEMIC'-->
+<!--    and value=tc.academicYearId) as academicYear,(select des from TSysdic where-->
+<!--    tablename='COMMON' and filedname='TERM' and value=tc.term) as term-->
+<!--    from TinstructorClass tc,Tclass cl,Tcolleage cg,Tmajor m-->
+<!--    where tc.classId=cl.id-->
+<!--    and cl.majorId=m.id-->
+<!--    and tc.instructorId=#{instructorId}-->
+<!--    <if test="academicYearId!=null">-->
+<!--      and tc.academicYearId=#{academicYearId}-->
+<!--    </if>-->
+<!--    <if test="term!=null">-->
+<!--      and tc.term=#{term}-->
+<!--    </if>-->
+<!--    <if test="isAtSchool!=null">-->
+<!--      and Year(now())-cl.enteryear $lt;=4-->
+<!--    </if>-->
+<!--  </select>-->
+
+
+</mapper>

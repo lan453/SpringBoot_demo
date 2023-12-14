@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>新增班级</title>
+    <link rel="stylesheet" type="text/css" href="/extend/easyui-1.10.8/themes/gray/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/extend/easyui-1.10.8/themes/icon.css">
+    <script type="text/javascript" src="/extend/easyui-1.10.8/jquery.min.js"></script>
+    <script type="text/javascript" src="/extend/easyui-1.10.8/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/extend/easyui-1.10.8/locale/easyui-lang-zh_CN.js"></script>
+    <link rel="stylesheet" type="text/css" href="/extend/easyui-1.10.8/demo.css">
+</head>
+<body>
+<form style="margin-left:30px;margin-top:30px;" id="classFormAdd" class="easyui-form"  method="POST" data-options="novalidate:true,border:0">
+    <input type="hidden" name="id" id="instructorId">
+    <div style="margin-bottom:12px">
+        <input class="easyui-textbox" id="classNameId" name="name" style="width:250px" data-options="label:'班级名称:',required:true">
+    </div>
+    <div style="margin-bottom:12px">
+        <input id="yearId" class="easyui-combobox" name="enteryear" style="width:250px" data-options="label:'入学年份:',valueField:'id',textField:'text',url:'/mgt/common/grade'">
+    </div>
+    <div style="margin-bottom:12px">
+        <input id="colleageNameId" class="easyui-combobox" name="colleageid" style="width:250px" data-options="label:'所属学院:',valueField:'id',textField:'text',url:'/mgt/colleage/addColleage'">
+    </div>
+    <div>
+        <input id="majorId" class="easyui-combobox" name="majorid" style="width:250px" data-options="label:'专业:', valueField:'id',textField:'text',url:'/mgt/major/queryMajor'">
+    </div>
+</form>
+    <script>
+        $(document).ready(function (){
+            var t=$('#colleageTreeId').tree('getSelected');
+            // window.alert(t);
+            if (t && parseInt(t.id)>-1){
+                $('#colleageNameId').combobox('readonly');
+                $('#colleageNameId').combobox('setValue',t.id);
+            }
+        })
+
+        function submitForm(){
+            $('#classFormAdd').form('submit',{
+                onSubmit:function(){
+                    // window.alert($(this).form('enableValidation').form('validate')); 返回true
+                    return $(this).form('enableValidation').form('validate');
+                },
+                url:'/mgt/class/addClass',
+                success:function(data){
+                    console.log(typeof (data))
+                    data = JSON.parse(data);
+                    if (data.resultCode == 200){
+                        $.messager.alert('info',data.message);
+                        $('#classDialog').dialog('close');
+                        queryClass();
+                    }else {
+                        $.messager.alert('warning',data.message);
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

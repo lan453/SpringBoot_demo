@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>新增辅导员</title>
+    <link rel="stylesheet" type="text/css" href="/extend/easyui-1.10.8/themes/gray/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/extend/easyui-1.10.8/themes/icon.css">
+    <script type="text/javascript" src="/extend/easyui-1.10.8/jquery.min.js"></script>
+    <script type="text/javascript" src="/extend/easyui-1.10.8/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/extend/easyui-1.10.8/locale/easyui-lang-zh_CN.js"></script>
+    <link rel="stylesheet" type="text/css" href="/extend/easyui-1.10.8/demo.css">
+</head>
+<body>
+
+
+        <div class="easyui-tabs" style="width: auto;height: auto" data-options="border:0">
+        <div title="辅导员基本属性" style="padding:0px" data-options="border:0">
+            <form style="margin-left:30px;margin-top:30px;" id="instructorFormAdd" class="easyui-form"  method="POST" data-options="novalidate:true,border:0">
+
+                <div style="margin-bottom:12px">
+                    <input class="easyui-textbox" id="numId" name="num" style="width:300px" data-options="label:'工号:',required:true">
+                </div>
+                <div style="margin-bottom:12px">
+                    <input class="easyui-textbox" id="nameId" name="name" style="width:300px" data-options="label:'姓名:',required:true">
+                </div>
+                <div style="margin-bottom:12px">
+                    <input id="colleageNameId" class="easyui-combobox" name="colleageid" style="width:250px" data-options="label:'所属学院:',valueField:'id',textField:'text',url:'/mgt/colleage/addColleage'">
+                </div>
+                <div style="margin-bottom:12px">
+                    <input class="easyui-datebox" id="enterdateId" name="enterdate" label="入职日期:"  data-options="formatter:myformatter,parser:myparser" style="width:300px;">
+                </div>
+
+            </form>
+
+            <script>
+                $(document).ready(function (){
+                    var t=$('#colleageTreeId').tree('getSelected');
+                    // window.alert(t);
+                    if (t && parseInt(t.id)>-1){
+                        $('#colleageNameId').combobox('readonly');
+                        $('#colleageNameId').combobox('setValue',t.id);
+                    }
+                })
+                function submitForm(){
+                    //验证
+                    let isInstructorValid = $('#instructorFormAdd').form('enableValidation').form('validate');
+                    let isClassValid = $('#agentClassFormAdd').form('enableValidation').form('validate');
+                    if (isInstructorValid==false||isClassValid==false){
+                        // window.alert("if (isInstructorValid==false||isClassValid==false)")
+                        return;
+                    }
+                    let instructorArray=$('#instructorFormAdd').serializeArray();//对表单的值序列化
+                    let instructObj = {};//辅导员对象
+                    // window.alert(instructorArray);
+                    instructorArray.forEach(item=>{
+                        instructObj[item.name] = item.value;
+                    });
+                    //构建辅导员班级关联关系对象
+                    let  instructorClassArray=[];//辅导员班级关联对象数组
+                    let selectedClass = $('#academicClassId').combo('getValues');
+                    // window.alert(selectedClass);
+                    selectedClass.forEach(item=>{
+                        let instructorClass={};
+                        instructorClass.academicyearid = $('#academicYearId').combo('getValue');
+                        instructorClass.term = $('#termId').combo('getValue');
+                        instructorClass.classid=item;
+                        instructorClassArray.push(instructorClass);
+                    });
+                    let param ={instructor:instructObj,instructorclasses:instructorClassArray};
+                    // window.alert(param);
+                    $.ajax({
+                       url:"/mgt/instructor/add",
+                       //json对象
+                       data:JSON.stringify(param),
+                        //返回值的类型
+                       dataType:"json",
+                        //内容类型
+                       contentType:"application/json",
+                       type:"post",
+                       success:function (resp) {
+                           if (typeof(resp)=='string'){
+                               resp=JSON.parse(resp);
+                           }
+                           if (resp.resultCode==200){
+                               $.messager.alert('info',resp.message);
+                               queryInstructor();
+                               $('#instructorDialog').dialog('close');
+                           }else {
+                               $.messager.alert('warning',resp.message);
+                           }
+                       }
+                    });
+                }
+            </script>
+            <script type="text/javascript">
+                function myformatter(date){
+                    var y = date.getFullYear();
+                    var m = date.getMonth()+1;
+                    var d = date.getDate();
+                    return y+'-'+(m<10?('0'+m):m)+'-'+(d<10?('0'+d):d);
+                }
+                function myparser(s){
+                    if (!s) return new Date();
+                    var ss = (s.split('-'));
+                    var y = parseInt(ss[0],10);
+                    var m = parseInt(ss[1],10);
+                    var d = parseInt(ss[2],10);
+                    if (!isNaN(y) && !isNaN(m) && !isNaN(d)){
+                        return new Date(y,m-1,d);
+                    } else {
+                        return new Date();
+                    }
+                }
+            </script>
+        </div>
+
+        <div title="代理班级" style="padding:0px" data-options="border:0">
+            <form style="margin-left:30px;margin-top:30px;" id="agentClassFormAdd" class="easyui-form"  method="POST" data-options="novalidate:true">
+                <div style="margin-bottom:12px">
+                    <input id="academicYearId" class="easyui-combobox" name="academicyearid" style="width:300px" data-options="label:'学年:',valueField:'id',textField:'text',url:'/mgt/common/diclist?tableName=COMON&fieldName=ACADEMIC'">
+                </div>
+                <div style="margin-bottom:12px">
+                    <input id="termId" class="easyui-combobox" name="term" style="width:300px" data-options="label:'学期:', valueField:'id',textField:'text',url:'/mgt/common/diclist?tableName=COMON&fieldName=TERM'">
+                </div>
+                <div style="margin-bottom:12px">
+                    <input id="academicClassId" name="classid" style="width:300px" >
+                </div>
+            </form>
+
+            <script>
+                $(document).ready(function (){
+                   initClass();
+                });
+                function initClass(){
+                    let colleageData = $('#colleageTreeId').tree('getSelected');
+                    // window.alert(colleageData);
+                    if (colleageData==null||colleageData.id==-1){
+                        $('#academicClassId').combotree({
+                            url:'/mgt/colleage/queryClassTree',
+                            required:true,
+                            label:'班级',
+                            panelHeight:190,
+                            multiple:true,
+                            onlyLeafCheck:true
+                        });
+                    }else {
+                        // console.log(colleageData.id);
+                        $('#academicClassId').combobox({
+                            url:'/mgt/class/queryByColleageId/'+colleageData.id,
+                            valueField:'id',
+                            textField:'text',
+                            required: true,
+                            label: '班级',
+                            panelHeight:190,
+                            multiple:true
+                        });
+                    }
+                }
+
+            </script>
+
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>新增学员</title>
+    <link rel="stylesheet" type="text/css" href="/extend/easyui-1.10.8/themes/gray/easyui.css">
+	<link rel="stylesheet" type="text/css" href="/extend/easyui-1.10.8/themes/icon.css">
+	<script type="text/javascript" src="/extend/easyui-1.10.8/jquery.min.js"></script>
+	<script type="text/javascript" src="/extend/easyui-1.10.8/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="/extend/easyui-1.10.8/locale/easyui-lang-zh_CN.js"></script>
+  </head>
+  <body>
+     <form style="margin-left:30px;margin-top:30px;" id="colleageFormAdd" class="easyui-form"  method="POST" data-options="novalidate:true">
+         <input type="hidden" name="id" id="colleageId">
+         <div style="margin-bottom:12px">
+            <input class="easyui-textbox" id="codeID" name="code" style="width:400px" data-options="label:'学院编号:',required:true">
+         </div>
+         <div style="margin-bottom:12px">
+           <input class="easyui-textbox" id="nameId" name="name" style="width:400px" data-options="label:'学院名称:',required:true">
+         </div>
+     </form>
+     
+     <script>
+       function submitForm(){
+			$('#colleageFormAdd').form('submit',{
+				onSubmit:function(){
+                    // window.alert($(this).form('enableValidation').form('validate')); 返回true
+					return $(this).form('enableValidation').form('validate');
+				},
+				url:'/mgt/colleage/add',
+				 success:function(data){
+				        console.log(typeof (data))
+                        data = JSON.parse(data);
+                        if (data.resultCode == 200){
+                            $.messager.alert('info',data.message);
+                            $('#colleageDialog').dialog('close');
+                            queryColleage();
+                        }else {
+                            $.messager.alert('warning',data.message);
+                        }
+				 }
+			});
+		}
+     </script>
+  
+  </body>
+  
+</html>

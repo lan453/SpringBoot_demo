@@ -1,0 +1,122 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>专业管理</title>
+    <link rel="stylesheet" type="text/css" href="/extend/jquery-easyui-1.10.8/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/extend/jquery-easyui-1.10.8/themes/icon.css">
+    <script type="text/javascript" src="/extend/jquery-easyui-1.10.8/jquery.min.js"></script>
+    <script type="text/javascript" src="/extend/jquery-easyui-1.10.8/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/extend/jquery-easyui-1.10.8/locale/easyui-lang-zh_CN.js"></script>
+</head>
+<body>
+<table class="easyui-datagrid" id="MajorTable" style="width:100%"
+       data-options="rownumbers:true,
+            url:'/mgt/major/query',
+            loadMsg:'正在加载数据...',
+            emptyMsg:'没有满足条件的数据',
+			singleSelect:true,method:'post',
+			toolbar:'#tb',fit:true,
+			pagination:true,
+			pageSize:10"
+>
+<thead>
+<tr>
+    <th data-options="field:'id',hidden:true"></th>
+    <th data-options="field:'code',width:180,align:'center'">专业编号</th>
+    <th data-options="field:'name',width:260,align:'center'">专业名称</th>
+</tr>
+</thead>
+</table>
+<div id="tb" style="padding:2px 5px;">
+    <div id="tbbar">
+        <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'" onclick="openDialog('/mgt/major/major_add.html','新增专业')">新增</a>
+        <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-edit'" onclick="updateData('/mgt/major/major_update.html','修改专业')">修改</a>
+        <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'" onclick="deleteData()">删除</a>
+    </div>
+    <div id="querybar">
+        <input class="easyui-textbox" name="code" id="codeID" style="width:400px"  data-options="label:'专业编号:'">
+        <input class="easyui-textbox" name="name" id="nameID" style="width:400px" data-options="label:'专业名称:'">
+        <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-search'" onclick="queryMajor()">查询</a>
+    </div>
+</div>
+<div id="majorDialog"></div>
+<script>
+    function updateData(page,title){
+        let selectedDate = $('#MajorTable').datagrid('getSelected');
+        if (selectedDate==null){
+            $.messager.alert('info','请选择修改的数据！');
+            return;
+        }
+        page = page+'?id='+selectedDate.id;
+        openDialog(page,title);
+    }
+
+
+    function deleteData(){
+        let selectedData = $('#MajorTable').datagrid('getSelected');
+        if (selectedData==null){
+            $.messager.alert('info','请选择删除的数据！');
+            return;
+        }
+        $.messager.confirm('提示','是否确定删除此数据？',function (r){
+            if (r){
+                $.ajax({
+                    url:"/mgt/major/delete/"+selectedData.id,
+                    type:"delete",
+                    success:function (result){
+                        // window.alert(result.resultCode);
+                        // result=JSON.parse(result);
+                        if(result.resultCode == 200){
+                            $.messager.alert('info',result.message);
+                            // queryColleage();
+                            let index = $('#MajorTable').datagrid('getRowIndex',selectedData);
+                            $('#MajorTable').datagrid('deleteRow',index);
+                        }else {
+                            $.messager.alert('warning',result.message);
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    function queryMajor() {
+        let codeValue = $('#codeID').textbox('getValue');
+        let nameValue = $('#nameID').textbox('getValue');
+        $('#MajorTable').datagrid('reload',{name:nameValue,code:codeValue});
+    }
+
+    function openDialog(page,title){
+        $('#majorDialog').dialog({
+            title: title,
+            width: 500,
+            height: 250,
+            closed: false,
+            cache: false,
+            href: page,
+            modal: true,
+            buttons:[{
+                text:'提交',
+                handler:function(){
+                    submitForm();
+                }
+            },{
+                text:'关闭',
+                handler:function(){
+                    $('#majorDialog').dialog('close');
+                }
+            }]
+        });
+
+    }
+
+</script>
+
+
+
+
+
+</body>
+</html>

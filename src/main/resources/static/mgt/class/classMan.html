@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>班级管理</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="/extend/jquery-easyui-1.10.8/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/extend/jquery-easyui-1.10.8/themes/icon.css">
+    <script type="text/javascript" src="/extend/jquery-easyui-1.10.8/jquery.min.js"></script>
+    <script type="text/javascript" src="/extend/jquery-easyui-1.10.8/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/extend/jquery-easyui-1.10.8/locale/easyui-lang-zh_CN.js"></script>
+
+</head>
+<body class="easyui-layout">
+<!--学院扩展栏-->
+<div  data-options="region:'west',split:true,border:false" title="学院" style="width:180px;" >
+    <ul class="easyui-tree" id="colleageTreeId" data-options="
+					url:'/mgt/colleage/vcolleage',
+					method:'post',
+					animate:true,
+					onContextMenu:function(e,node){
+					    e.preventDefault();
+						$(this).tree('select',node.target);
+					},
+					onClick:function(node){
+					    queryClass();
+					}
+				">
+    </ul>
+</div>
+
+<div data-options="region:'center',iconCls:'icon-ok'" style="padding:5px">
+    <table class="easyui-datagrid" id="classTable" style="width:100%"
+           data-options="rownumbers:true,
+            url:'/mgt/class/pageList',
+            loadMsg:'正在加载数据...',
+            emptyMsg:'没有满足条件的数据',
+			singleSelect:true,method:'post',
+			toolbar:'#ctb',fit:true,
+			pagination:true,
+			pageSize:10"
+    >
+        <thead>
+            <tr>
+                <th data-options="field:'id',hidden:true"></th>
+                <th data-options="field:'className',width:180,align:'center'">班级名称</th>
+                <th data-options="field:'enteryear',width:180,align:'center'">入学年份</th>
+                <th data-options="field:'colleageName',width:180,align:'center'">所属学院</th>
+                <th data-options="field:'majorName',width:180,align:'center'">专业</th>
+            </tr>
+        </thead>
+    </table>
+    <div id="ctb" style="padding:2px 5px;">
+        <div id="tbbar">
+            <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'" onclick="addClass('/mgt/class/class_add.html','新增班级')">新增</a>
+            <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-edit'" onclick="updateClass('/mgt/class/class_update.html','修改班级')">修改</a>
+            <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'" onclick="deleteClass()">删除</a>
+        </div>
+        <div id="querybar">
+            <form id="classQueryForm" class="easyui-form">
+                <input class="easyui-textbox"  id="nameID" name="name" style="width:250px" data-options="label:'班级名称:'">
+                <input class="easyui-combobox" id="enteryearId" name="enteryear" data-options="label:'学生年级:',valueField:'id',textField:'text',url:'/mgt/common/grade'">
+                <input class="easyui-combobox" id="majorId" name="majorid" style="width:200px" data-options="label:'专业:', valueField:'id',textField:'text',url:'/mgt/major/queryMajor'">
+                <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-search'" onclick="queryClass()">查询</a>
+            </form>
+        </div>
+    </div>
+
+    <div id="classDialog"></div>
+
+</div>
+<script>
+    function updateClass(page,title){
+        let selectedDate = $('#classTable').datagrid('getSelected');
+        if (selectedDate==null){
+            $.messager.alert('info','请选择修改的数据！');
+            return;
+        }
+        page = page+'?id='+selectedDate.id;
+        addClass(page,title);
+    }
+
+
+    function deleteClass(){
+        let selectedData = $('#classTable').datagrid('getSelected');
+        if (selectedData==null){
+            $.messager.alert('info','请选择删除的数据！');
+            return;
+        }
+        $.messager.confirm('提示','是否确定删除此数据？',function (r){
+            if (r){
+                $.ajax({
+                    url:"/mgt/class/delete/"+selectedData.id,
+                    type:"delete",
+                    success:function (result){
+                        // window.alert(result.resultCode);
+                        // result=JSON.parse(result);
+                        if(result.resultCode == 200){
+                            $.messager.alert('info',result.message);
+                            // queryColleage();
+                            let index = $('#classTable').datagrid('getRowIndex',selectedData);
+                            $('#classTable').datagrid('deleteRow',index);
+                        }else {
+                            $.messager.alert('warning',result.message);
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    function queryClass() {
+        let paramArray = $('#classQueryForm').serializeArray();
+        //[{name:'enteryear',value:2021},{name:'majorid',value:1}]
+        let colleage = $('#colleageTreeId').tree('getSelected');
+        let param = {};
+        if (colleage!=null){
+            param.colleageid=colleage.id;
+        }
+
+        paramArray.forEach(function (item,index){
+            if (item.name!=''){
+                param[item.name] = item.value;
+            }
+        });
+        console.log(param);
+        $('#classTable').datagrid('reload',param);
+    }
+
+    function addClass(page,title){
+        $('#classDialog').dialog({
+            title: title,
+            width: 500,
+            height: 310,
+            closed: false,
+            cache: false,
+            href: page,
+            modal: true,
+            buttons:[{
+                text:'提交',
+                handler:function(){
+                    submitForm();
+                }
+            },{
+                text:'关闭',
+                handler:function(){
+                    $('#classDialog').dialog('close');
+                }
+            }]
+        });
+
+    }
+
+</script>
+
+
+</body>
+</html>

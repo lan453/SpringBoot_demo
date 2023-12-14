@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.springboot_demo.dao.mapper.TdestinationMapper">
+  <resultMap id="BaseResultMap" type="com.example.springboot_demo.entity.Tdestination">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="recordAdviceId" jdbcType="BIGINT" property="recordadviceid" />
+    <result column="studentId" jdbcType="BIGINT" property="studentid" />
+    <result column="provinceId" jdbcType="BIGINT" property="provinceid" />
+    <result column="cityId" jdbcType="BIGINT" property="cityid" />
+    <result column="countyId" jdbcType="BIGINT" property="countyid" />
+    <result column="detail" jdbcType="VARCHAR" property="detail" />
+    <result column="backDate" jdbcType="DATE" property="backdate" />
+    <result column="leaveDate" jdbcType="DATE" property="leavedate" />
+    <result column="isLeave" jdbcType="INTEGER" property="isleave" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, recordAdviceId, studentId, provinceId, cityId, countyId, detail, backDate, leaveDate, 
+    isLeave
+  </sql>
+  <select id="selectByExample" parameterType="com.example.springboot_demo.entity.TdestinationExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from tdestination
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tdestination
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tdestination
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.example.springboot_demo.entity.TdestinationExample">
+    delete from tdestination
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.example.springboot_demo.entity.Tdestination">
+    insert into tdestination (recordAdviceId, studentId,
+      provinceId, cityId, countyId, 
+      detail, backDate, leaveDate,
+      isLeave)
+    values (#{recordadviceid,jdbcType=BIGINT}, #{studentid,jdbcType=BIGINT},
+      #{provinceid,jdbcType=BIGINT}, #{cityid,jdbcType=BIGINT}, #{countyid,jdbcType=BIGINT}, 
+      #{detail,jdbcType=VARCHAR}, #{backdate,jdbcType=DATE}, #{leavedate,jdbcType=DATE},
+      #{isleave,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.springboot_demo.entity.Tdestination">
+    insert into tdestination
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="recordadviceid != null">
+        recordAdviceId,
+      </if>
+      <if test="studentid != null">
+        studentId,
+      </if>
+      <if test="provinceid != null">
+        provinceId,
+      </if>
+      <if test="cityid != null">
+        cityId,
+      </if>
+      <if test="countyid != null">
+        countyId,
+      </if>
+      <if test="detail != null">
+        detail,
+      </if>
+      <if test="backdate != null">
+        backDate,
+      </if>
+      <if test="leavedate != null">
+        leaveDate,
+      </if>
+      <if test="isleave != null">
+        isLeave,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="recordadviceid != null">
+        #{recordadviceid,jdbcType=BIGINT},
+      </if>
+      <if test="studentid != null">
+        #{studentid,jdbcType=BIGINT},
+      </if>
+      <if test="provinceid != null">
+        #{provinceid,jdbcType=BIGINT},
+      </if>
+      <if test="cityid != null">
+        #{cityid,jdbcType=BIGINT},
+      </if>
+      <if test="countyid != null">
+        #{countyid,jdbcType=BIGINT},
+      </if>
+      <if test="detail != null">
+        #{detail,jdbcType=VARCHAR},
+      </if>
+      <if test="backdate != null">
+        #{backdate,jdbcType=DATE},
+      </if>
+      <if test="leavedate != null">
+        #{leavedate,jdbcType=DATE},
+      </if>
+      <if test="isleave != null">
+        #{isleave,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.example.springboot_demo.entity.TdestinationExample" resultType="java.lang.Long">
+    select count(*) from tdestination
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update tdestination
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.recordadviceid != null">
+        recordAdviceId = #{record.recordadviceid,jdbcType=BIGINT},
+      </if>
+      <if test="record.studentid != null">
+        studentId = #{record.studentid,jdbcType=BIGINT},
+      </if>
+      <if test="record.provinceid != null">
+        provinceId = #{record.provinceid,jdbcType=BIGINT},
+      </if>
+      <if test="record.cityid != null">
+        cityId = #{record.cityid,jdbcType=BIGINT},
+      </if>
+      <if test="record.countyid != null">
+        countyId = #{record.countyid,jdbcType=BIGINT},
+      </if>
+      <if test="record.detail != null">
+        detail = #{record.detail,jdbcType=VARCHAR},
+      </if>
+      <if test="record.backdate != null">
+        backDate = #{record.backdate,jdbcType=DATE},
+      </if>
+      <if test="record.leavedate != null">
+        leaveDate = #{record.leavedate,jdbcType=DATE},
+      </if>
+      <if test="record.isleave != null">
+        isLeave = #{record.isleave,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update tdestination
+    set id = #{record.id,jdbcType=BIGINT},
+      recordAdviceId = #{record.recordadviceid,jdbcType=BIGINT},
+      studentId = #{record.studentid,jdbcType=BIGINT},
+      provinceId = #{record.provinceid,jdbcType=BIGINT},
+      cityId = #{record.cityid,jdbcType=BIGINT},
+      countyId = #{record.countyid,jdbcType=BIGINT},
+      detail = #{record.detail,jdbcType=VARCHAR},
+      backDate = #{record.backdate,jdbcType=DATE},
+      leaveDate = #{record.leavedate,jdbcType=DATE},
+      isLeave = #{record.isleave,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.springboot_demo.entity.Tdestination">
+    update tdestination
+    <set>
+      <if test="recordadviceid != null">
+        recordAdviceId = #{recordadviceid,jdbcType=BIGINT},
+      </if>
+      <if test="studentid != null">
+        studentId = #{studentid,jdbcType=BIGINT},
+      </if>
+      <if test="provinceid != null">
+        provinceId = #{provinceid,jdbcType=BIGINT},
+      </if>
+      <if test="cityid != null">
+        cityId = #{cityid,jdbcType=BIGINT},
+      </if>
+      <if test="countyid != null">
+        countyId = #{countyid,jdbcType=BIGINT},
+      </if>
+      <if test="detail != null">
+        detail = #{detail,jdbcType=VARCHAR},
+      </if>
+      <if test="backdate != null">
+        backDate = #{backdate,jdbcType=DATE},
+      </if>
+      <if test="leavedate != null">
+        leaveDate = #{leavedate,jdbcType=DATE},
+      </if>
+      <if test="isleave != null">
+        isLeave = #{isleave,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.springboot_demo.entity.Tdestination">
+    update tdestination
+    set recordAdviceId = #{recordadviceid,jdbcType=BIGINT},
+      studentId = #{studentid,jdbcType=BIGINT},
+      provinceId = #{provinceid,jdbcType=BIGINT},
+      cityId = #{cityid,jdbcType=BIGINT},
+      countyId = #{countyid,jdbcType=BIGINT},
+      detail = #{detail,jdbcType=VARCHAR},
+      backDate = #{backdate,jdbcType=DATE},
+      leaveDate = #{leavedate,jdbcType=DATE},
+      isLeave = #{isleave,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <resultMap id="PCCResultMap" type="com.example.springboot_demo.ventity.ComBoxEntity">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="text" />
+  </resultMap>
+  <select id="listProvince" resultMap="PCCResultMap">
+    select id,name from tregion
+    where parentRegionId is null
+  </select>
+  <select id="listCity" resultMap="PCCResultMap">
+    select id,name from tregion
+    where parentRegionId=#{arg0}
+  </select>
+  <select id="listCounty" resultMap="PCCResultMap">
+    select id,name from tregion
+    where parentRegionId=#{arg0}
+  </select>
+
+
+  <resultMap id="queryFestivalRegMap" type="com.example.springboot_demo.ventity.VFestivalRegTable">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name"/>
+    <result column="gender" jdbcType="CHAR" property="gender"/>
+    <result column="leaveDate" jdbcType="DATE" property="leaveDate" />
+    <result column="backDate" jdbcType="DATE" property="backDate" />
+    <result column="destination" jdbcType="VARCHAR" property="destination"/>
+  </resultMap>
+  <select id="queryFestivalReg" resultMap="queryFestivalRegMap" parameterType="com.example.springboot_demo.ventity.CommonQueryTree">
+    SELECT
+    d.id,st.name,sy.des as gender,d.leaveDate,d.backDate,
+    CONCAT(
+    (SELECT name FROM tregion WHERE d.provinceId = id LIMIT 1),
+    (SELECT name FROM tregion WHERE d.cityId = id LIMIT 1),
+    (SELECT name FROM tregion WHERE d.countyId = id LIMIT 1),
+    (SELECT detail FROM tdestination LIMIT 1)
+    ) AS destination
+    FROM
+    tdestination d,Tstudent st,tclass cl,tstuclass sc,tsysdic sy
+    where d.studentId=st.id
+    and st.id=sc.studentID and sc.classid=cl.id and st.gender=sy.value
+    and sy.tablename='COMON' and sy.filedname='GENDER'
+    and d.recordAdviceId=#{recordadviceId,jdbcType=BIGINT}
+    <if test="colleageId!=null and colleageId != ''"> and cl.colleageId = #{colleageId,jdbcType=TINYINT} </if>
+    <if test="enteryear!=null and enteryear!=''"> and cl.enteryear=#{enteryear,jdbcType=TINYINT} </if>
+    <if test="classId!=null and classId!=''"> and cl.id=#{classId,jdbcType=TINYINT} </if>
+  </select>
+</mapper>
